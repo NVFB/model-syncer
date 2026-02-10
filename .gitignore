@@ -1,0 +1,42 @@
+# --- OS ---
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# --- Editors / IDEs ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Cursor local project data (optional; usually not committed)
+.cursor/
+
+# --- Logs / temp / runtime artifacts ---
+*.log
+*.tmp
+*.bak
+*.orig
+*.pid
+
+# --- Local env / secrets ---
+.env
+.env.*
+!.env.example
+secrets/
+*.key
+*.pem
+
+# --- Docker / compose local overrides ---
+docker-compose.override.yml
+compose.override.yml
+
+# --- Common build outputs (in case you add tooling later) ---
+dist/
+build/
+out/
+
