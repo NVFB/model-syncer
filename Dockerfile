@@ -1,5 +1,9 @@
 FROM alpine:3.21
 
+LABEL org.opencontainers.image.source=https://github.com/NVFB/model-syncer
+LABEL org.opencontainers.image.description="Model syncer"
+LABEL org.opencontainers.image.licenses=Apache-2.0
+
 # bash: required by cronsync.sh shebang and set -o pipefail
 # rsync: sync engine
 # util-linux: provides flock compatible with fd usage (flock -n 200)
