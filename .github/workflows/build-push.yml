@@ -63,7 +63,7 @@ jobs:
         uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: image
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.split-tags.outputs._1 }}
+          image-ref: ${{ steps.split-tags.outputs._1 }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
