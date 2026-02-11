@@ -10,6 +10,7 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
+  IMAGE_NAME: nvfb/model-syncer #${{ github.repository }}
 
 jobs:
   build-and-push:
@@ -32,7 +33,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ github.repository }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
             type=sha,prefix=
@@ -51,7 +52,7 @@ jobs:
         uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: image
-          image-ref: ghcr.io/${{ github.repository }}:${{ github.sha }}
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
