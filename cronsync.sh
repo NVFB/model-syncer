@@ -1,8 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SRC="${SRC:-/scratch/models/}"
-DST="${DST:-/raid/models/}"
+if [ -z "${SRC+x}" ]; then
+    echo "Environment variable SRC is not set. Exiting." >&2
+    exit 1
+fi
+
+if [ -z "${DST+x}" ]; then
+    echo "Environment variable DST is not set. Exiting." >&2
+    exit 1
+fi
+
+SRC="$SRC"
+DST="$DST"
 
 
 LOCKFILE="/tmp/cronsync_models.lock"
