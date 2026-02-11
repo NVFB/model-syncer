@@ -1,6 +1,8 @@
-# ModelSyncer
+# Model
 
 Periodically syncs a directory of models from a **source** (`SRC`) to a **destination** (`DST`) using `rsync`, driven by a configurable crontab. Designed to run as a **sidecar** next to an app that consumes the synced models (e.g. inference server), with both containers sharing the same volumes.
+
+Given local NVMe is faster than your mounted shared FS, this allows for a periodic sync of the models that can be downloaded to the shared FS, and copied
 
 ## How it works
 
@@ -8,7 +10,7 @@ Periodically syncs a directory of models from a **source** (`SRC`) to a **destin
 - Schedule is defined at container start via **crontab** (env or file). Default: every hour (`0 * * * *`).
 - Optional: run one sync immediately on start with `RUN_ON_START=1`.
 
-## Using ModelSyncer as a sidecar
+## Using model-syncer as a sidecar
 
 Run the syncer **next to** your main app in the same pod/compose stack. Mount the same **SRC** and **DST** volumes into both containers so the app reads from the destination that the sidecar keeps updated.
 
@@ -28,7 +30,7 @@ Run the syncer **next to** your main app in the same pod/compose stack. Mount th
 
 ### Kubernetes: sidecar in the same pod
 
-Share a volume between the main container and the ModelSyncer sidecar. The app uses the same `DST` path read-only; the sidecar writes to it.
+Share a volume between the main container and the model-syncer sidecar. The app uses the same `DST` path read-only; the sidecar writes to it.
 
 ```yaml
 apiVersion: apps/v1
@@ -67,6 +69,18 @@ spec:
               cpu: "2"
               memory: 6G
               nvidia.com/gpu: "1"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 60
+            periodSeconds: 5
           volumeMounts:
             - name: models
               mountPath: /raid/models
@@ -102,12 +116,7 @@ spec:
             sizeLimit: "2Gi"
 ```
 
-## Image and build
-
-- **GHCR:** `ghcr.io/YOUR_ORG/ModelSyncer:latest` (and `:sha-<commit>` from CI).
-- Built on push to `main` via GitHub Actions; image is pushed to GitHub Container Registry.
-
-Replace `YOUR_ORG` with your GitHub org or username.
+Validate the deployment via `kubectl -n default apply -f deploy.yaml --dry-run=client`
 
 ## Custom crontab
 
@@ -116,4 +125,4 @@ Replace `YOUR_ORG` with your GitHub org or username.
 
 ## License
 
-See repository license file.
+See repository LICENSE file.
